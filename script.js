@@ -421,3 +421,70 @@ if (hintEl) {
   init();
   loop();
 })();
+
+
+// ============================================================
+// 7. LIVE "RECENT ACTIVITY" FROM GITHUB
+//    fetches the 3 latest commits straight from the GitHub API
+//    and swaps them in for the hardcoded fallback list below.
+//    if the request fails (offline, rate-limited, etc.) the
+//    original static list just stays put — never a blank section.
+// ============================================================
+(function liveActivity() {
+  const listEl = document.getElementById("activity-list");
+
+  // only the homepage has this section — skip on project pages
+  if (!listEl) return;
+
+  const REPO = "imkrisshpatel/imkrisshpatel.github.io";
+
+  function timeAgo(dateStr) {
+    const seconds = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    const units = [
+      ["y", 31536000],
+      ["mo", 2592000],
+      ["d", 86400],
+      ["h", 3600],
+      ["m", 60],
+    ];
+    for (const [label, secs] of units) {
+      const amount = Math.floor(seconds / secs);
+      if (amount >= 1) return `${amount}${label} ago`;
+    }
+    return "just now";
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  fetch(`https://api.github.com/repos/${REPO}/commits?per_page=3`)
+    .then((res) => {
+      if (!res.ok) throw new Error("github api request failed");
+      return res.json();
+    })
+    .then((commits) => {
+      if (!Array.isArray(commits) || commits.length === 0) return;
+
+      listEl.innerHTML = "";
+      commits.forEach((c) => {
+        const rawMessage = c.commit.message.split("\n")[0]; // first line only
+        const trimmed =
+          rawMessage.length > 70 ? rawMessage.slice(0, 67) + "..." : rawMessage;
+        const message = escapeHtml(trimmed);
+
+        const item = document.createElement("div");
+        item.className = "activity-item";
+        item.innerHTML =
+          '<span class="activity-icon">&#9670;</span>' +
+          '<span class="activity-text">commit: ' + message + "</span>" +
+          '<span class="activity-time">' + timeAgo(c.commit.author.date) + "</span>";
+        listEl.appendChild(item);
+      });
+    })
+    .catch(() => {
+      // network error, rate limit, etc. — leave the static fallback list as-is
+    });
+})();
