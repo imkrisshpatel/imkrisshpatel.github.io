@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sentinel — Krish Patel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/devicon@2.15.1/devicon.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="progress" id="progress"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="status">
+        <span class="status-pulse"></span>
+        always learning
+    </div>
+    <div class="hint" id="hint"><span class="diamond">&#9670;</span>click an asteroid</div>
+
+    <div class="page">
+        <a href="../index.html" class="back-link">&larr; back to projects</a>
+
+        <div class="project-header">
+            <p class="project-label">// project</p>
+            <h1 class="project-title">sentinel</h1>
+            <p class="project-tagline">ai log detective &amp; sre observability platform</p>
+            <div class="tag-row">
+                <span class="tag"><i class="devicon-python-plain colored tag-icon"></i>python</span>
+                <span class="tag"><span class="tag-icon-dot"></span>langgraph</span>
+                <span class="tag"><i class="devicon-fastapi-plain colored tag-icon"></i>fastapi</span>
+                <span class="tag"><i class="devicon-postgresql-plain colored tag-icon"></i>postgresql</span>
+            </div>
+        </div>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// problem</p>
+            <p class="detail-body">
+                when something breaks in production, digging through logs by hand
+                to find the root cause is slow — by the time timestamps are
+                correlated across services, the outage has already cost real
+                downtime.
+            </p>
+        </section>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// approach</p>
+            <p class="detail-body">
+                engineered a multi-agent sre observability platform using stateful
+                langgraph workflows to automate root cause analysis. a
+                high-concurrency ingestion engine built on python asyncio
+                processes 100+ simultaneous telemetry feeds, and llm agents
+                integrated via the mcp sdk map anomalous log patterns back to the
+                exact source code location responsible — automating patch
+                generation instead of just flagging the issue.
+            </p>
+        </section>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// results</p>
+            <div class="results-row">
+                <div class="result-stat">
+                    <p class="result-number">40%</p>
+                    <p class="result-label">less downtime</p>
+                </div>
+                <div class="result-stat">
+                    <p class="result-number">&lt;5s</p>
+                    <p class="result-label">end-to-end rca reports</p>
+                </div>
+                <div class="result-stat">
+                    <p class="result-number">30%</p>
+                    <p class="result-label">less manual debugging</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../script.js"></script>
+</body>
+</html>

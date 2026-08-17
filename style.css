@@ -1,0 +1,624 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #0a0a0b;
+  color: #d0d0ca;
+  font-family: 'Courier New', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* faint grid overlay, sits above the solid bg color but below the canvas
+     particles (canvas is position:fixed, painted after this in stacking order) */
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ===== background canvas (dots + asteroids, animated in script.js) ===== */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== scroll progress bar, fixed along the very top edge ===== */
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: #8a8a44;
+  box-shadow: 0 0 6px rgba(140, 150, 80, 0.6);
+  z-index: 10;
+  transition: width 0.1s linear;
+}
+
+/* ===== "click an asteroid" hint, fades on its own or on first click ===== */
+.hint {
+  position: fixed;
+  left: 24px;
+  bottom: 20px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #7a7a74;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+.hint .diamond {
+  color: #8a8a44;
+  font-size: 9px;
+}
+
+.hint.faded {
+  opacity: 0;
+}
+
+/* everything else needs to sit above the canvas */
+.page,
+.status {
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== status dot, fixed top corner ===== */
+.status {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #7a7a74;
+  letter-spacing: 0.05em;
+}
+
+.status-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #6fbf6f;
+  box-shadow: 0 0 0 rgba(111, 191, 111, 0.6);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(111, 191, 111, 0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(111, 191, 111, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(111, 191, 111, 0); }
+}
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 3.5rem 2rem;
+}
+
+/* ===== intro / header =====
+   .intro starts tall + centered on the viewport so the typed name feels
+   like a splash screen. once script.js adds .collapsed (after typing
+   finishes) it transitions down to a normal compact header. */
+.intro {
+  text-align: center;
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* without this, flex children (like .links) stretch
+                           to the full column width instead of hugging their
+                           own content — that's what was causing the long
+                           empty bar after "contact" */
+  transition: min-height 0.8s ease, margin-bottom 0.8s ease;
+  margin-bottom: 32px;
+}
+
+.intro.collapsed {
+  min-height: 0;
+}
+
+.prompt {
+  color: #55554e;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+
+.name {
+  color: #f5f5f0;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.cursor {
+  color: #8a8a44;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+.tagline {
+  color: #7a7a74;
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+.links {
+  display: inline-flex;
+  border: 0.5px solid #2a2a26;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  color: #d0d0ca;
+  font-size: 12px;
+  padding: 6px 14px;
+  text-decoration: none;
+  border-right: 0.5px solid #2a2a26;
+}
+
+.link:last-child {
+  border-right: none;
+}
+
+/* hover-underline: an ::after bar that grows from 0 to full width */
+.link::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 4px;
+  height: 1px;
+  background: #8a8a44;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.2s ease;
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+}
+
+/* icon nudges up slightly on hover — same treatment on nav links,
+   stack pills, and project tag icons for consistency */
+.link i,
+.link svg {
+  transition: transform 0.2s ease;
+}
+
+.link:hover i,
+.link:hover svg {
+  transform: translateY(-2px);
+}
+
+/* icons shared by the nav links, stack pills, and project tag rows.
+   devicon renders as an icon font (a glyph via ::before), so font-size
+   controls its size and color would control it too — except the
+   "colored" variants swap in a multi-color background-image instead,
+   which is why those ones ignore text color entirely. */
+.link-icon {
+  font-size: 13px;
+  margin-right: 6px;
+  color: #7a7a74; /* muted grey — only affects devicon-github-original since
+                      it's a plain single-color glyph; the "colored" class on
+                      linkedin overrides this with its own brand color */
+}
+
+.svg-icon {
+  width: 13px;
+  height: 13px;
+  margin-right: 6px;
+  color: #7a7a74;
+  vertical-align: middle;
+}
+
+.pill-icon {
+  font-size: 14px;
+  margin-right: 7px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.tag-icon {
+  font-size: 13px;
+  margin-right: 6px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+/* fallback for techs devicon doesn't have a logo for (langgraph, scikit-learn) —
+   a small accent-colored dot instead of a missing icon */
+.pill-icon-dot,
+.tag-icon-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8a8a44;
+  margin-right: 8px;
+  vertical-align: 1px;
+  transition: transform 0.2s ease;
+}
+
+.pill:hover .pill-icon,
+.pill:hover .pill-icon-dot {
+  transform: translateY(-2px);
+}
+
+.tag:hover .tag-icon,
+.tag:hover .tag-icon-dot {
+  transform: translateY(-2px);
+}
+
+/* ===== content wrapper: fades in after the intro collapses ===== */
+.content {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.content.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* per-section reveal: sections below the fold fade/slide in individually
+   the first time they scroll into view, instead of everything appearing
+   at once when .content gets .visible */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-label {
+  color: #55554e;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  color: #d0d0ca;
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 0.5px solid #202020;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.015);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.pill:hover {
+  transform: scale(1.06);
+  border-color: rgba(140, 150, 80, 0.45);
+}
+
+.education {
+  margin-bottom: 32px;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 24px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: linear-gradient(#3a3a35, transparent);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -24px;
+  top: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3a3a35;
+  border: 2px solid #0a0a0b;
+  transition: box-shadow 0.4s ease;
+}
+
+.dot-recent {
+  background: #8a8a44;
+}
+
+/* a soft pulse the moment this timeline entry scrolls into view */
+.timeline-item.in-view .timeline-dot {
+  box-shadow: 0 0 0 5px rgba(140, 150, 80, 0.18);
+}
+
+.timeline-date {
+  color: #7a7a74;
+  font-size: 11px;
+  margin-bottom: 3px;
+}
+
+/* row pairing a company/school logo chip with the role or degree title */
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.logo-chip {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5px solid #202020;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  overflow: hidden;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.logo-chip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.logo-chip:hover {
+  transform: scale(1.08);
+  border-color: rgba(140, 150, 80, 0.45);
+}
+
+.timeline-title {
+  color: #e6e6e0;
+  font-size: 13px;
+}
+
+.timeline-sub {
+  color: #7a7a74;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.work {
+  margin-bottom: 32px;
+}
+
+.projects {
+  margin-bottom: 32px;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.project-card {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 0.5px solid #202020;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.015);
+  /* transform is no longer transitioned here — script.js drives it directly
+     on every mousemove for the 3D tilt effect, so a CSS transition would
+     just add lag. border-color/box-shadow still ease in normally. */
+  transition: box-shadow 0.18s, border-color 0.18s;
+  transform-style: preserve-3d;
+  will-change: transform;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.project-card:hover {
+  border-color: rgba(140, 150, 80, 0.45);
+  box-shadow: 0 10px 24px rgba(140, 150, 80, 0.1);
+}
+
+.project-name {
+  color: #e6e6e0;
+  font-size: 13px;
+}
+
+.project-desc {
+  color: #7a7a74;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.status-badge {
+  color: #8a8a44;
+  font-size: 10px;
+  border: 0.5px solid #3a3a2a;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* ===== recent activity ===== */
+.activity {
+  margin-bottom: 32px;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.activity-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.activity-icon {
+  color: #8a8a44;
+  font-size: 8px;
+}
+
+.activity-text {
+  color: #a0a09a;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-time {
+  color: #55554e;
+  flex-shrink: 0;
+}
+
+/* ===== footer ===== */
+.footer {
+  text-align: center;
+  color: #45453f;
+  font-size: 11px;
+  padding-top: 16px;
+  border-top: 0.5px solid #1a1a18;
+}
+
+/* ===== project detail pages (projects/*.html) ===== */
+.back-link {
+  display: inline-block;
+  color: #7a7a74;
+  font-size: 12px;
+  text-decoration: none;
+  margin-bottom: 28px;
+}
+
+.back-link:hover {
+  color: #d0d0ca;
+}
+
+.project-header {
+  margin-bottom: 28px;
+}
+
+.project-label {
+  color: #55554e;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  margin-bottom: 10px;
+}
+
+.project-title {
+  color: #f5f5f0;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.project-tagline {
+  color: #7a7a74;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  color: #d0d0ca;
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 0.5px solid #202020;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.detail-section {
+  margin-bottom: 26px;
+}
+
+.detail-body {
+  color: #b0b0aa;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.results-row {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.result-stat {
+  min-width: 90px;
+}
+
+.result-number {
+  color: #e6e6e0;
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.result-label {
+  color: #7a7a74;
+  font-size: 11px;
+}

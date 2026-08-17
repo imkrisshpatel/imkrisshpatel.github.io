@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>codequest_cli — Krish Patel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/devicon@2.15.1/devicon.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="progress" id="progress"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="status">
+        <span class="status-pulse"></span>
+        always learning
+    </div>
+    <div class="hint" id="hint"><span class="diamond">&#9670;</span>click an asteroid</div>
+
+    <div class="page">
+        <a href="../index.html" class="back-link">&larr; back to projects</a>
+
+        <div class="project-header">
+            <p class="project-label">// project</p>
+            <h1 class="project-title">codequest_cli</h1>
+            <p class="project-tagline">dsa practice tracker with an ai suggestion layer</p>
+            <div class="tag-row">
+                <span class="tag"><i class="devicon-java-plain colored tag-icon"></i>java</span>
+                <span class="tag"><i class="devicon-postgresql-plain colored tag-icon"></i>postgresql</span>
+                <span class="tag"><i class="devicon-git-plain colored tag-icon"></i>git</span>
+            </div>
+        </div>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// problem</p>
+            <p class="detail-body">
+                tracking dsa practice across scattered notes and gut feeling makes
+                it hard to know what patterns are actually weak versus just
+                recently practiced.
+            </p>
+        </section>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// approach</p>
+            <p class="detail-body">
+                built a cli that logs every solved problem with pattern tags, then
+                applies spaced-repetition scheduling and an llm-powered suggestion
+                layer for what to practice next. structured with solid principles
+                and the strategy pattern for pluggable review algorithms.
+            </p>
+        </section>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// results</p>
+            <div class="results-row">
+                <div class="result-stat">
+                    <p class="result-number">50+</p>
+                    <p class="result-label">problems tracked</p>
+                </div>
+                <div class="result-stat">
+                    <p class="result-number">5</p>
+                    <p class="result-label">solid principles applied</p>
+                </div>
+                <div class="result-stat">
+                    <p class="result-number">2</p>
+                    <p class="result-label">design patterns used</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../script.js"></script>
+</body>
+</html>

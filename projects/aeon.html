@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aeon — Krish Patel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/devicon@2.15.1/devicon.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="progress" id="progress"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="status">
+        <span class="status-pulse"></span>
+        always learning
+    </div>
+    <div class="hint" id="hint"><span class="diamond">&#9670;</span>click an asteroid</div>
+
+    <div class="page">
+        <a href="../index.html" class="back-link">&larr; back to projects</a>
+
+        <div class="project-header">
+            <p class="project-label">// project</p>
+            <h1 class="project-title">aeon</h1>
+            <p class="project-tagline">real-time ml monitoring engine</p>
+            <div class="tag-row">
+                <span class="tag"><i class="devicon-python-plain colored tag-icon"></i>python</span>
+                <span class="tag"><span class="tag-icon-dot"></span>scikit-learn</span>
+                <span class="tag"><i class="devicon-tensorflow-original tag-icon"></i>tensorflow</span>
+                <span class="tag"><i class="devicon-postgresql-plain colored tag-icon"></i>postgresql</span>
+            </div>
+        </div>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// problem</p>
+            <p class="detail-body">
+                equipment corrosion is expensive to catch late — by the time a
+                fault shows up visually, the damage and the downtime that comes
+                with it are already locked in.
+            </p>
+        </section>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// approach</p>
+            <p class="detail-body">
+                built a supervised ml pipeline with scikit-learn and tensorflow to
+                detect corrosion from sensor telemetry before failure. optimized
+                postgresql schemas and indexed queries to handle 1tb+ of
+                structured sensor data, plus drift-detection scripts that trigger
+                automated retraining via cron so the model doesn't go stale over
+                time.
+            </p>
+        </section>
+
+        <section class="detail-section">
+            <p class="section-label" style="text-align:left;">// results</p>
+            <div class="results-row">
+                <div class="result-stat">
+                    <p class="result-number">20%</p>
+                    <p class="result-label">better predictive accuracy</p>
+                </div>
+                <div class="result-stat">
+                    <p class="result-number">1tb+</p>
+                    <p class="result-label">sensor data processed</p>
+                </div>
+                <div class="result-stat">
+                    <p class="result-number">15%</p>
+                    <p class="result-label">reliability gain (6mo)</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="../script.js"></script>
+</body>
+</html>

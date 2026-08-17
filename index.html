@@ -2,22 +2,168 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Krish Patel</title>
+    <!-- devicon: icon font for tech-logo glyphs (java, python, aws, etc) used
+         on the stack pills, nav links, and project tag rows -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/devicon@2.15.1/devicon.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- thin scroll progress bar along the top edge -->
+    <div class="progress" id="progress"></div>
+
+    <!-- background canvas: starfield, dust dots that dodge the cursor,
+         a clickable/breakable asteroid belt, and the occasional comet.
+         all drawn/animated in script.js -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- small fixed status dot, top corner -->
+    <div class="status">
+        <span class="status-pulse"></span>
+        always learning
+    </div>
+
+    <!-- hint that the asteroids are clickable — fades on its own -->
+    <div class="hint" id="hint"><span class="diamond">&#9670;</span>click an asteroid</div>
+
     <div class="page">
-        <header class="intro">
+
+        <!-- header starts full-height/centered (see .intro / .intro.collapsed
+             in style.css) and collapses upward once the name finishes typing -->
+        <header class="intro" id="intro">
             <p class="prompt">&gt; whoami</p>
-            <h1 class="name">krish patel<span class="cursor">_</span></h1>
-            <p class="tagline">software engineer · toronto, on </p>
-            <div class ="links">
-                <a href="#" class="link">github</a>
-                <a href="#" class="link">linkedin</a>
-                <a href="#" class="link">resume</a>
-                <a href="#" class="link">contact</a>
+            <h1 class="name"><span id="typed"></span><span class="cursor">_</span></h1>
+            <p class="tagline">software engineer · toronto, on</p>
+            <div class="links">
+                <a href="https://github.com/imkrisshpatel" class="link" target="_blank" rel="noopener"><i class="devicon-github-original link-icon"></i>github</a>
+                <a href="https://linkedin.com/in/krissh-patel" class="link" target="_blank" rel="noopener"><i class="devicon-linkedin-plain colored link-icon"></i>linkedin</a>
+                <a href="resume.pdf" class="link" download><svg class="link-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>resume</a>
+                <a href="mailto:krisshpatel37@gmail.com" class="link"><svg class="link-icon svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22 6 12 13 2 6"/></svg>contact</a>
             </div>
         </header>
+
+        <!-- everything below fades in once the intro collapses -->
+        <div class="content" id="content">
+
+            <section class="stack">
+                <p class="section-label">// stack</p>
+                <div class="pills">
+                    <span class="pill"><i class="devicon-java-plain colored pill-icon"></i>java</span>
+                    <span class="pill"><i class="devicon-python-plain colored pill-icon"></i>python</span>
+                    <span class="pill"><i class="devicon-typescript-plain colored pill-icon"></i>typescript</span>
+                    <span class="pill"><i class="devicon-react-original colored pill-icon"></i>react</span>
+                    <span class="pill"><i class="devicon-spring-plain colored pill-icon"></i>spring boot</span>
+                    <span class="pill"><i class="devicon-docker-plain colored pill-icon"></i>docker</span>
+                    <span class="pill"><i class="devicon-amazonwebservices-original colored pill-icon"></i>aws</span>
+                    <span class="pill"><i class="devicon-git-plain colored pill-icon"></i>git</span>
+                    <span class="pill"><span class="pill-icon-dot"></span>langgraph</span>
+                </div>
+            </section>
+
+            <section class="education reveal">
+                <p class="section-label">// education</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot dot-recent"></div>
+                        <p class="timeline-date">sept 2026 — aug 2027</p>
+                        <div class="title-row">
+                            <div class="logo-chip"><img src="assets/logos/tmu.png" alt="toronto metropolitan university logo"></div>
+                            <p class="timeline-title">m.eng, electrical & computer engineering</p>
+                        </div>
+                        <p class="timeline-sub">toronto metropolitan university · ai concentration</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <p class="timeline-date">2022 — oct 2026</p>
+                        <div class="title-row">
+                            <div class="logo-chip"><img src="assets/logos/western.png" alt="western university logo"></div>
+                            <p class="timeline-title">b.sc, computer science</p>
+                        </div>
+                        <p class="timeline-sub">western university</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="work reveal">
+                <p class="section-label">// work</p>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot dot-recent"></div>
+                        <p class="timeline-date">may 2025 — aug 2025</p>
+                        <div class="title-row">
+                            <div class="logo-chip"><img src="assets/logos/headstarter.png" alt="headstarter ai logo"></div>
+                            <p class="timeline-title">software engineering fellow</p>
+                        </div>
+                        <p class="timeline-sub">headstarter ai · new york (remote)</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <p class="timeline-date">jun 2024 — aug 2024</p>
+                        <div class="title-row">
+                            <div class="logo-chip"><img src="assets/logos/zippi.png" alt="zippi ai logo"></div>
+                            <p class="timeline-title">data engineer intern</p>
+                        </div>
+                        <p class="timeline-sub">zippiai inc. · san francisco (remote)</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="projects reveal">
+                <p class="section-label">// projects — hover</p>
+                <div class="project-list">
+                    <a class="project-card" href="projects/codequest_cli.html">
+                        <div>
+                            <p class="project-name">codequest_cli</p>
+                            <p class="project-desc">dsa tracker with ai suggestions · java</p>
+                        </div>
+                        <span class="status-badge">in_progress</span>
+                    </a>
+                    <a class="project-card" href="projects/sentinel.html">
+                        <div>
+                            <p class="project-name">sentinel</p>
+                            <p class="project-desc">ai log detective &amp; sre observability platform</p>
+                        </div>
+                        <span class="status-badge">in_progress</span>
+                    </a>
+                    <a class="project-card" href="projects/aeon.html">
+                        <div>
+                            <p class="project-name">aeon</p>
+                            <p class="project-desc">real-time ml monitoring engine</p>
+                        </div>
+                        <span class="status-badge">in_progress</span>
+                    </a>
+                </div>
+            </section>
+
+            <section class="activity reveal">
+                <p class="section-label">// recent activity</p>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <span class="activity-icon">&#9670;</span>
+                        <span class="activity-text">commit: merge branch 'main' of github.com/imkrisshpatel/portfolio</span>
+                        <span class="activity-time">6h ago</span>
+                    </div>
+                    <div class="activity-item">
+                        <span class="activity-icon">&#9670;</span>
+                        <span class="activity-text">commit: initial setup — html skeleton and header</span>
+                        <span class="activity-time">6h ago</span>
+                    </div>
+                    <div class="activity-item">
+                        <span class="activity-icon">&#9670;</span>
+                        <span class="activity-text">commit: initial commit</span>
+                        <span class="activity-time">6h ago</span>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="footer reveal">
+                <p>// last updated aug 2026 · built with html · css · js</p>
+            </footer>
+
+        </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
